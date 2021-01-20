@@ -25,7 +25,7 @@ import json
 from json import JSONDecodeError
 
 try:
-    a=json.load(open(input()))
+    json.load(open(input()))
     print("True")
 
 except FileNotFoundError as e:
@@ -64,9 +64,9 @@ count_parse=$(echo "count.json" | python3 -c "
 import os
 import json
 
-aLoad = json.load(open('count.json'))
-b = int(aLoad['count'])
-print(b)
+data = json.load(open('count.json'))
+num = int(data['count'])
+print(num)
 
 ")
 
@@ -109,8 +109,8 @@ with open(input()) as f:
     data=f.read()
     cont_list=json.loads(data)
 
-b = int(cont_list['lastSeenAssetId'])
-print(b)
+last_id = int(cont_list['lastSeenAssetId'])
+print(last_id)
 
     ")
 
