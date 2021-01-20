@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# cd /opt/qualys        # uncomment when add to crontab
+
 timeStart=$(date)
 echo "Started at:" "$timeStart"
 
@@ -20,7 +22,7 @@ echo "Count of all assets for ""$timeStart"" is:" "$count_parse"
 echo "Number of JSON files after generate:" $json_nums
 
 function json_formatting() {
-    jq -s 'def deepmerge(a;b):
+  jq -s 'def deepmerge(a;b):
   reduce b[] as $item (a;
     reduce ($item | keys_unsorted[]) as $key (.;
       $item[$key] as $val | ($val | type) as $type | .[$key] = if ($type == "object") then
@@ -31,16 +33,16 @@ function json_formatting() {
         $val
       end)
     );
-  deepmerge({}; .)' content/content$num.json > output/content.json
-  
+  deepmerge({}; .)' content/content$num.json >output/qualys.json
+
   echo "Done"
 }
 
 for ((n = 1; n <= $json_nums; n++)); do
-    echo "$n"
-    num=$n
-    json_formatting
-    sleep 1m
+  echo "$n"
+  num=$n
+  json_formatting
+  sleep 20m
 done
 
 timeEnd=$(date)

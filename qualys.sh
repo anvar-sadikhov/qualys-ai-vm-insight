@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# cd /opt/qualys
+# cd /opt/qualys        # uncomment when add to crontab
 
 timeStart=$(date)
 echo "Started at:" "$timeStart"
