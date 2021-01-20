@@ -1,5 +1,7 @@
 *.json
 *.csv
+*.xlsx
+csv.py
 /logs
 /content
 auth
