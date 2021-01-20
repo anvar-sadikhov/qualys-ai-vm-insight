@@ -4,4 +4,5 @@
 csv.py
 /logs
 /content
-#auth
+/output
+auth
