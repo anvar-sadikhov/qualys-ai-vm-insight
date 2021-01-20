@@ -18,6 +18,7 @@ function auth_func() {
 
 function json_checker() {
   parser_message=$(echo "$json_path" | python3 -c "
+
 import os, json
 from json import JSONDecodeError
 
@@ -56,6 +57,7 @@ while [ "$parser_message" == "False" ]; do
 done
 
 count_parse=$(echo "count.json" | python3 -c "
+
 import os, json
 
 data = json.load(open('count.json'))
@@ -94,10 +96,10 @@ done
 
 function generate_nextJson() {
   lastId_parser=$(echo "$json_file" | python3 -c "
+
 import os, json
 
 with open(input()) as f:
-
     data=f.read()
     cont_list=json.loads(data)
 

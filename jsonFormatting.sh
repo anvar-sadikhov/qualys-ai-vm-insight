@@ -4,6 +4,7 @@ timeStart=$(date)
 echo "Started at:" "$timeStart"
 
 count_parse=$(echo "count.json" | python3 -c "
+
 import os, json
 
 data = json.load(open('count.json'))
