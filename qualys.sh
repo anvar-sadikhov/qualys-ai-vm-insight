@@ -1,9 +1,8 @@
 #!/bin/bash
 
-# cd /opt/qualys        # uncomment when add to crontab
+# cd /opt/qualys     # Uncomment befor add to server and crontab   
 
-timeStart=$(date)
-echo "Started at:" "$timeStart"
+echo "JSON Generation Started at:" "$(date)"
 
 ### Function for defining Qualys Authentication API to get the JWT Token as a Variable
 
@@ -37,9 +36,13 @@ except JSONDecodeError as ex:
 # Authorize to Qualys
 auth_func
 
-### Count all assets and output
+### Remove old files and logs
 
+rm -rf content/*
+rm -rf output/*
 rm -rf logs/count.log
+
+### Count all assets and output
 
 count_post="curl -X POST -H 'Accept: */*' -H 'Authorization: Bearer "$auth_token"' -H 'Content-Type: application/json'  'https://gateway.qg2.apps.qualys.eu/am/v1/assets/host/count'"
 
@@ -92,7 +95,6 @@ while [ "$parser_message" == "False" ]; do
 done
 
 ### Function for generating of the Next JSON file
-# Check lastSeenAssetId if exists
 
 function generate_nextJson() {
   lastId_parser=$(echo "$json_file" | python3 -c "
@@ -137,6 +139,49 @@ function download_json() {
   done
 }
 
+function export_csv() {
+  csv_file=$(python3 -c "
+
+import os, json, glob
+
+files=glob.glob('content/*', recursive=True)
+
+data = []
+
+for single_file in files:
+    with open(single_file, 'r') as f:
+        json_file=json.load(f)
+        asset=json_file['assetListData']['asset']
+
+        for objects in asset:
+            data.append([
+                objects['assetUUID'],
+                objects['assetId'],
+                objects['address'],
+                objects['assetName'],
+                objects['netbiosName'],
+                objects['lastLoggedOnUser'],
+                objects['biosSerialNumber'],
+                objects['biosAssetTag'],
+                objects['operatingSystem']['fullName'],
+                objects['operatingSystem']['category1'],
+                objects['operatingSystem']['category2'],
+                objects['hardware']['fullName'],
+                objects['hardware']['category1'],
+                objects['hardware']['category2'],
+                objects['lastModifiedDate'],
+                objects['createdDate']
+            ])
+
+
+data.insert(0, ['AssetUUID', 'AssetID', 'Address', 'AssetName', 'NetBiosName', 'LastLoggedOnUser', 'BiosSerialNumber', 'BiosAssetTag', 'OperatingSystem', 'OS Category', 'OS SubCategory', 'Hardware', 'Hardware Category', 'Hardware SubCategory', 'LastModifiedDate', 'CreatedDate'])
+
+print('\n'.join(', '.join(str(e) for e in d) for d in data))
+  ")
+
+  echo "$csv_file" >output/qualys.csv
+}
+
 ### Generate JSON files in loop
 
 for ((n = 2; n <= $json_nums; n++)); do
@@ -146,5 +191,10 @@ for ((n = 2; n <= $json_nums; n++)); do
   download_json
 done
 
-timeEnd=$(date)
-echo "Finished at:" "$timeEnd"
+echo "JSON Generation Finished at:" "$(date)"
+
+echo "JSON Exporting to CSV Started at:" "$(date)"
+
+export_csv
+
+echo "JSON Exporting to CSV Finished at:" "$(date)"
