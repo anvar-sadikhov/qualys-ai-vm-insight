@@ -154,9 +154,9 @@ for single_file in files:
         asset=json_file['assetListData']['asset']
 
         for objects in asset:
-            data.append([
-                objects['assetUUID'],
+            data.append([                
                 objects['assetId'],
+                objects['assetUUID'],
                 objects['address'],
                 objects['assetName'],
                 objects['netbiosName'],
@@ -174,7 +174,7 @@ for single_file in files:
             ])
 
 
-data.insert(0, ['AssetUUID', 'AssetID', 'Address', 'AssetName', 'NetBiosName', 'LastLoggedOnUser', 'BiosSerialNumber', 'BiosAssetTag', 'OperatingSystem', 'OS Category', 'OS SubCategory', 'Hardware', 'Hardware Category', 'Hardware SubCategory', 'LastModifiedDate', 'CreatedDate'])
+data.insert(0, ['AssetID', 'AssetUUID', 'Address', 'AssetName', 'NetBiosName', 'LastLoggedOnUser', 'BiosSerialNumber', 'BiosAssetTag', 'OperatingSystem', 'OS Category', 'OS SubCategory', 'Hardware', 'Hardware Category', 'Hardware SubCategory', 'LastModifiedDate', 'CreatedDate'])
 
 print('\n'.join(', '.join(str(e) for e in d) for d in data))
   ")
