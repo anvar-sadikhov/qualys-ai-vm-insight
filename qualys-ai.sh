@@ -7,8 +7,8 @@ echo "JSON Generation Started at:" "$(date)"
 ### Function for defining Qualys Authentication API to get the JWT Token as a Variable
 
 function auth_func() {
-  uName=$(cat auth | awk '{print $1}')
-  pWord=$(cat auth | awk '{print $2}')
+  uName=$(cat auth.txt | awk '{print $1}')
+  pWord=$(cat auth.txt | awk '{print $2}')
 
   auth_token=$(curl -X POST 'https://gateway.qg2.apps.qualys.eu/auth' -d 'username='"$uName"'&password='"$pWord"'&token=true' -H 'ContentType:application/x-www-form-urlencoded')
 }
