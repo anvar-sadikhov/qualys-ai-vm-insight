@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# cd /opt/qualys     # Uncomment before add to server and crontab   
+# cd /opt/qualys     # Uncomment before add to server and crontab
 
 echo "Asset Inventory JSON Generation Started at:" "$(date)"
 

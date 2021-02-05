@@ -7,7 +7,7 @@ echo "Vulnerability Management CSV Download Finished at:" "$(date)"
 function auth_func() {
   uName=$(cat auth.txt | awk '{print $1}')
   pWord=$(cat auth.txt | awk '{print $2}')
-  region_url=$(cat auth.txt | awk '{print $3}')  
+  region_url=$(cat auth.txt | awk '{print $3}')
 }
 
 auth_func
