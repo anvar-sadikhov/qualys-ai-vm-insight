@@ -2,15 +2,16 @@
 
 # cd /opt/qualys     # Uncomment before add to server and crontab   
 
-echo "JSON Generation Started at:" "$(date)"
+echo "Asset Inventory JSON Generation Started at:" "$(date)"
 
 ### Function for defining Qualys Authentication API to get the JWT Token as a Variable
 
 function auth_func() {
   uName=$(cat auth.txt | awk '{print $1}')
   pWord=$(cat auth.txt | awk '{print $2}')
+  region_url=$(cat auth.txt | awk '{print $3}')
 
-  auth_token=$(curl -X POST 'https://gateway.qg2.apps.qualys.eu/auth' -d 'username='"$uName"'&password='"$pWord"'&token=true' -H 'ContentType:application/x-www-form-urlencoded')
+  auth_token=$(curl -X POST 'https://gateway.'"$region_url"'/auth' -d 'username='"$uName"'&password='"$pWord"'&token=true' -H 'ContentType:application/x-www-form-urlencoded')
 }
 
 ## Function for checking if JSON is correct. True/False/FileNotFoundError
@@ -44,7 +45,7 @@ rm -rf logs/count.log
 
 ### Count all assets and output
 
-count_post="curl -X POST -H 'Accept: */*' -H 'Authorization: Bearer "$auth_token"' -H 'Content-Type: application/json'  'https://gateway.qg2.apps.qualys.eu/am/v1/assets/host/count'"
+count_post="curl -X POST -H 'Accept: */*' -H 'Authorization: Bearer "$auth_token"' -H 'Content-Type: application/json'  'https://gateway."$region_url"/am/v1/assets/host/count'"
 
 eval "$count_post" >count.json
 
@@ -78,7 +79,7 @@ cat logs/count.log
 
 ### For generating and downloading of the First JSON file
 
-firstFile_post="curl -X POST -H 'Accept: */*' -H 'Authorization: Bearer "$auth_token"' -H 'Content-Type: application/json'  'https://gateway.qg2.apps.qualys.eu/am/v1/assets/host/list'"
+firstFile_post="curl -X POST -H 'Accept: */*' -H 'Authorization: Bearer "$auth_token"' -H 'Content-Type: application/json'  'https://gateway."$region_url"/am/v1/assets/host/list'"
 
 echo "1"
 eval "$firstFile_post" >content/content1.json
@@ -112,7 +113,7 @@ print(last_id)
   echo "lastSeenAssetId is:" "$lastId_parser"
 
   if [ ! -z "$lastId_parser" ]; then
-    nextFile_post="curl -X POST -H 'Accept: */*' -H 'Authorization: Bearer "$auth_token"' -H 'Content-Type: application/json'  'https://gateway.qg2.apps.qualys.eu/am/v1/assets/host/list?lastSeenAssetId="$lastId_parser"'"
+    nextFile_post="curl -X POST -H 'Accept: */*' -H 'Authorization: Bearer "$auth_token"' -H 'Content-Type: application/json'  'https://gateway."$region_url"/am/v1/assets/host/list?lastSeenAssetId="$lastId_parser"'"
   else
     echo "Request failed"
     exit
@@ -179,7 +180,7 @@ data.insert(0, ['AssetID', 'AssetUUID', 'Address', 'AssetName', 'NetBiosName', '
 print('\n'.join(', '.join(str(e) for e in d) for d in data))
   ")
 
-  echo "$csv_file" >output/qualys.csv
+  echo "$csv_file" >output/assets.csv
 }
 
 ### Generate JSON files in loop
@@ -191,10 +192,10 @@ for ((n = 2; n <= $json_nums; n++)); do
   download_json
 done
 
-echo "JSON Generation Finished at:" "$(date)"
+echo "Asset Inventory JSON Generation Finished at:" "$(date)"
 
-echo "JSON Exporting to CSV Started at:" "$(date)"
+echo "Asset Inventory JSON Exporting to CSV Started at:" "$(date)"
 
 export_csv
 
-echo "JSON Exporting to CSV Finished at:" "$(date)"
+echo "Asset Inventory JSON Exporting to CSV Finished at:" "$(date)"
