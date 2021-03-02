@@ -1,7 +1,6 @@
 *.json
 *.csv
 *.xlsx
-*.py
 /logs
 /temp
 /content
