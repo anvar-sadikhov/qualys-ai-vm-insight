@@ -1,8 +1,7 @@
 *.json
 *.csv
 *.xlsx
-/logs
-/temp
-/content
-/output
-auth.txt
+logs/*
+temp/*
+content/*
+output/*
