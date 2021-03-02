@@ -1,4 +1,4 @@
-#!/bin/bash
+#! /bin/bash
 
 # cd /opt/qualys     # Uncomment before add to server and crontab
 
@@ -7,19 +7,18 @@ echo "Asset Inventory JSON Generation Started at:" "$(date)"
 ### Function for defining Qualys Authentication API to get the JWT Token as a Variable
 
 function auth_func() {
-  uName=$(cat auth.txt | awk '{print $1}')
-  pWord=$(cat auth.txt | awk '{print $2}')
-  region_url=$(cat auth.txt | awk '{print $3}')
+  USERNAME=$(cat auth.txt | awk '{print $1}')
+  PASSWORD=$(cat auth.txt | awk '{print $2}')
+  REGION_URL=$(cat auth.txt | awk '{print $3}')
 
-  auth_token=$(curl -X POST 'https://gateway.'"$region_url"'/auth' -d 'username='"$uName"'&password='"$pWord"'&token=true' -H 'ContentType:application/x-www-form-urlencoded')
+  auth_token=$(curl -X POST 'https://gateway.'"${REGION_URL}"'/auth' -d 'username='"${USERNAME}"'&password='"${PASSWORD}"'&token=true' -H 'ContentType:application/x-www-form-urlencoded')
 }
 
 ## Function for checking if JSON is correct. True/False/FileNotFoundError
 
 function json_checker() {
-  parser_message=$(echo "$json_path" | python3 -c "
-
-import os, json
+  parser_message=$(echo "${json_path}" | python3 -c "
+import json
 from json import JSONDecodeError
 
 try:
@@ -42,55 +41,55 @@ auth_func
 rm -rf content/*
 rm -rf output/*
 rm -rf logs/count.log
+rm -rf temp/*
 
 ### Count all assets and output
 
-count_post="curl -X POST -H 'Accept: */*' -H 'Authorization: Bearer "$auth_token"' -H 'Content-Type: application/json'  'https://gateway."$region_url"/am/v1/assets/host/count'"
+count_post="curl -X POST -H 'Accept: */*' -H 'Authorization: Bearer "${auth_token}"' -H 'Content-Type: application/json'  'https://gateway."${REGION_URL}"/am/v1/assets/host/count'"
 
-eval "$count_post" >count.json
+eval "${count_post}" >temp/count.json
 
-json_path="count.json"
+json_path="temp/count.json"
 json_checker
 
-while [ "$parser_message" == "False" ]; do
-  eval "$count_post" >count.json
+while [ "${parser_message}" == "False" ]; do
+  eval "${count_post}" >temp/count.json
   json_checker
-  if [ "$parser_message" != "False" ]; then
+  if [ "${parser_message}" != "False" ]; then
     break
   fi
 done
 
-count_parse=$(echo "count.json" | python3 -c "
+count_parse=$(echo "temp/count.json" | python3 -c "
+import json
 
-import os, json
-
-data = json.load(open('count.json'))
+data = json.load(open('temp/count.json'))
 num = int(data['count'])
 
 print(num)
     ")
 
-json_nums=$((($count_parse / 100) + (100 % 3 > 0)))
+json_nums=$(((${count_parse} / 100) + (100 % 3 > 0)))
 
 # Output count of all assets in count.log and CLI
-echo "Count of all assets for ""$timeStart"" is:" "$count_parse" >logs/count.log
-echo "Number of JSON files after generate:" $json_nums >>logs/count.log
+echo "Count of all assets for ""${timeStart}"" is:" "${count_parse}" >logs/count.log
+echo "Number of JSON files after generate:" ${json_nums} >>logs/count.log
 cat logs/count.log
 
 ### For generating and downloading of the First JSON file
 
-firstFile_post="curl -X POST -H 'Accept: */*' -H 'Authorization: Bearer "$auth_token"' -H 'Content-Type: application/json'  'https://gateway."$region_url"/am/v1/assets/host/list'"
+firstFile_post="curl -X POST -H 'Accept: */*' -H 'Authorization: Bearer "${auth_token}"' -H 'Content-Type: application/json'  'https://gateway."${REGION_URL}"/am/v1/assets/host/list'"
 
 echo "1"
-eval "$firstFile_post" >content/content1.json
+eval "${firstFile_post}" >content/content1.json
 
 json_path="content/content1.json"
 json_checker
 
-while [ "$parser_message" == "False" ]; do
-  eval "$firstFile_post" >content/content1.json
+while [ "${parser_message}" == "False" ]; do
+  eval "${firstFile_post}" >content/content1.json
   json_checker
-  if [ "$parser_message" != "False" ]; then
+  if [ "${parser_message}" != "False" ]; then
     break
   fi
 done
@@ -98,9 +97,8 @@ done
 ### Function for generating of the Next JSON file
 
 function generate_nextJson() {
-  lastId_parser=$(echo "$json_file" | python3 -c "
-
-import os, json
+  lastId_parser=$(echo "${json_file}" | python3 -c "
+import json
 
 with open(input()) as f:
     data=f.read()
@@ -110,10 +108,10 @@ last_id = int(cont_list['lastSeenAssetId'])
 print(last_id)
     ")
 
-  echo "lastSeenAssetId is:" "$lastId_parser"
+  echo "lastSeenAssetId is:" "${lastId_parser}"
 
-  if [ ! -z "$lastId_parser" ]; then
-    nextFile_post="curl -X POST -H 'Accept: */*' -H 'Authorization: Bearer "$auth_token"' -H 'Content-Type: application/json'  'https://gateway."$region_url"/am/v1/assets/host/list?lastSeenAssetId="$lastId_parser"'"
+  if [ ! -z "${lastId_parser}" ]; then
+    nextFile_post="curl -X POST -H 'Accept: */*' -H 'Authorization: Bearer "${auth_token}"' -H 'Content-Type: application/json'  'https://gateway."${REGION_URL}"/am/v1/assets/host/list?lastSeenAssetId="${lastId_parser}"'"
   else
     echo "Request failed"
     exit
@@ -123,18 +121,18 @@ print(last_id)
 ### Function for downloading of the Next JSON file
 
 function download_json() {
-  json_file="content/content$prevNum.json"
+  json_file="content/content${prevNum}.json"
   generate_nextJson
 
-  eval "$nextFile_post" >content/content"$num".json
+  eval "${nextFile_post}" >content/content"${num}".json
 
-  json_path="content/content$num.json"
+  json_path="content/content${num}.json"
   json_checker
 
-  while [ "$parser_message" == "False" ]; do
-    eval "$nextFile_post" >content/content"$num".json
+  while [ "${parser_message}" == "False" ]; do
+    eval "$nextFile_post" >content/content"${num}".json
     json_checker
-    if [ "$parser_message" != "False" ]; then
+    if [ "${parser_message}" != "False" ]; then
       break
     fi
   done
@@ -142,8 +140,7 @@ function download_json() {
 
 function export_csv() {
   csv_file=$(python3 -c "
-
-import os, json, glob
+import json, glob
 
 files=glob.glob('content/*', recursive=True)
 
@@ -174,21 +171,20 @@ for single_file in files:
                 objects['createdDate']
             ])
 
-
 data.insert(0, ['AssetID', 'AssetUUID', 'Address', 'AssetName', 'NetBiosName', 'LastLoggedOnUser', 'BiosSerialNumber', 'BiosAssetTag', 'OperatingSystem', 'OS Category', 'OS SubCategory', 'Hardware', 'Hardware Category', 'Hardware SubCategory', 'LastModifiedDate', 'CreatedDate'])
 
-print('\n'.join(', '.join(str(e) for e in d) for d in data))
+print('\n'.join(','.join('"{}"'.format(e) for e in d) for d in data))
   ")
 
-  echo "$csv_file" >output/assets.csv
+  echo "${csv_file}" >output/assets.csv
 }
 
 ### Generate JSON files in loop
 
-for ((n = 2; n <= $json_nums; n++)); do
-  echo "$n"
+for ((n = 2; n <= ${json_nums}; n++)); do
+  echo "${n}"
   prevNum=$((n - 1))
-  num=$n
+  num=${n}
   download_json
 done
 

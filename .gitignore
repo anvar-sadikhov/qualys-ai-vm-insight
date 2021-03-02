@@ -1,8 +1,9 @@
 *.json
 *.csv
 *.xlsx
-test.py
+*.py
 /logs
+/temp
 /content
 /output
 auth.txt
