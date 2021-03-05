@@ -5,9 +5,9 @@
 echo "Vulnerability Knowledge Base Generation Started at:" "$(date)"
 
 function export_xml() {
-  USERNAME=$(cat auth.txt | awk '{print $1}')
-  PASSWORD=$(cat auth.txt | awk '{print $2}')
-  REGION_URL=$(cat auth.txt | awk '{print $3}')
+  USERNAME=$(cat auth.conf | awk '{print $1}')
+  PASSWORD=$(cat auth.conf | awk '{print $2}')
+  REGION_URL=$(cat auth.conf | awk '{print $3}')
 
   curl -n -H 'X-Requested-With: curl' -u ${USERNAME}:${PASSWORD} 'https://qualysapi.'"${REGION_URL}"'/api/2.0/fo/knowledge_base/vuln/?action=list&details=All'
 } 

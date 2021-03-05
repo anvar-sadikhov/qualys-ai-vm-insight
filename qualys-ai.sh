@@ -7,9 +7,9 @@ echo "Asset Inventory JSON Generation Started at:" "$(date)"
 ### Function for defining Qualys Authentication API to get the JWT Token as a Variable
 
 function auth_func() {
-  USERNAME=$(cat auth.txt | awk '{print $1}')
-  PASSWORD=$(cat auth.txt | awk '{print $2}')
-  REGION_URL=$(cat auth.txt | awk '{print $3}')
+  USERNAME=$(cat auth.conf | awk '{print $1}')
+  PASSWORD=$(cat auth.conf | awk '{print $2}')
+  REGION_URL=$(cat auth.conf | awk '{print $3}')
 
   auth_token=$(curl -X POST 'https://gateway.'"${REGION_URL}"'/auth' -d 'username='"${USERNAME}"'&password='"${PASSWORD}"'&token=true' -H 'ContentType:application/x-www-form-urlencoded')
 }
