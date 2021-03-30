@@ -84,6 +84,7 @@ LOGIN           PASSWORD      REGION_URL
 
 __REGION_URL__ -  (https://www.qualys.com/platform-identification/)
 
+```bash
 US1	qg1.apps.qualys.com
 US2	qg2.apps.qualys.com
 US3	qg3.apps.qualys.com
@@ -92,7 +93,7 @@ EU2	qg2.apps.qualys.eu
 IN1	qg1.apps.qualys.in
 CA1	qg1.apps.qualys.ca
 AE1	qg1.apps.qualys.ae
-
+```
 
 ## Qualys - Asset Inventory 
 
@@ -104,11 +105,7 @@ __qualys-ai.sh__ - Generates Authorization Token in a variable by using credenti
 
 + Output file in /opt/qualys/output: assets.csv 
 
->Contains: 'AssetID', 'AssetUUID', 'Address', 'AssetName', 'NetBiosName', 'LastLoggedOnUser', 'BiosSerialNumber', 'BiosAssetTag', 
-
-'OperatingSystem', 'OS Category', 'OS SubCategory', 'Hardware', 'Hardware Category', 'Hardware SubCategory', 'LastModifiedDate',
-
-'CreatedDate'.
+>Contains: 'AssetID', 'AssetUUID', 'Address', 'AssetName', 'NetBiosName', 'LastLoggedOnUser', 'BiosSerialNumber', 'BiosAssetTag', 'OperatingSystem', 'OS Category', 'OS SubCategory', 'Hardware', 'Hardware Category', 'Hardware SubCategory', 'LastModifiedDate', 'CreatedDate'.
 
 
 ## Qualys - Vulnerability Management
@@ -164,9 +161,10 @@ There are more than 300000 objects when downloads all CVE bases by years.
 
 (https://documentation.mindville.com/insight/5.4/system-requirements)
 
+```bash
 ~10000	    4Gb
 ~100000	    8Gb
 ~500000	    16Gb
 ~1000000	32Gb
 ~2000000	64Gb
-
+```
