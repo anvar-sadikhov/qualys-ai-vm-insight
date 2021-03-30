@@ -165,6 +165,6 @@ There are more than 300000 objects when downloads all CVE bases by years.
 ~10000	    4Gb
 ~100000	    8Gb
 ~500000	    16Gb
-~1000000	32Gb
-~2000000	64Gb
+~1000000    32Gb
+~2000000    64Gb
 ```
