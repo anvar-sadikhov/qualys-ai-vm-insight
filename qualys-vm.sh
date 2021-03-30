@@ -16,6 +16,6 @@ vm_post="curl -H 'X-Requested-With: Curl Sample' -u '"${USERNAME}':'${PASSWORD}"
 
 eval "${vm_post}" >temp/vm-temp.csv
 
-cut --complement -f 2-9,11-16,18-36 -d, temp/vm-temp.csv >output/vm.csv
+cut --complement -f 2-6,8-13,15-36 -d, temp/vm-temp.csv >output/vm.csv
 
 echo "Vulnerability Management CSV Download Finished at:" "$(date)"
