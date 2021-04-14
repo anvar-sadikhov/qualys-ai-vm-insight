@@ -138,6 +138,10 @@ __vuln2csv.xsl__ - XSLT format generator. Generates cve.csv
 
 >Using knowledge_base_vuln_list_output.dtd structure file
 
+_xsltproc_ - is required
+
+>yum -y install libxslt
+
 ## Insight NVD Integration
 
 
