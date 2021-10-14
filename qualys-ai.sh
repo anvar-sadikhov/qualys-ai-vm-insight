@@ -45,7 +45,7 @@ rm -rf temp/*
 
 ### Count all assets and output
 
-count_post="curl -X POST -H 'Accept: */*' -H 'Authorization: Bearer "${auth_token}"' -H 'Content-Type: application/json'  'https://gateway."${REGION_URL}"/am/v1/assets/host/count'"
+count_post="curl -X POST -H 'Accept: */*' -H 'Authorization: Bearer "${auth_token}"' -H 'Content-Type: application/json'  'https://gateway."${REGION_URL}"/rest/2.0/count/am/asset'"
 
 eval "${count_post}" >temp/count.json
 
@@ -78,7 +78,7 @@ cat logs/count.log
 
 ### For generating and downloading of the First JSON file
 
-firstFile_post="curl -X POST -H 'Accept: */*' -H 'Authorization: Bearer "${auth_token}"' -H 'Content-Type: application/json'  'https://gateway."${REGION_URL}"/am/v1/assets/host/list'"
+firstFile_post="curl -X POST -H 'Accept: */*' -H 'Authorization: Bearer "${auth_token}"' -H 'Content-Type: application/json'  'https://gateway."${REGION_URL}"/rest/2.0/search/am/asset'"
 
 echo "1"
 eval "${firstFile_post}" >content/content1.json
@@ -111,7 +111,7 @@ print(last_id)
   echo "lastSeenAssetId is:" "${lastId_parser}"
 
   if [ ! -z "${lastId_parser}" ]; then
-    nextFile_post="curl -X POST -H 'Accept: */*' -H 'Authorization: Bearer "${auth_token}"' -H 'Content-Type: application/json'  'https://gateway."${REGION_URL}"/am/v1/assets/host/list?lastSeenAssetId="${lastId_parser}"'"
+    nextFile_post="curl -X POST -H 'Accept: */*' -H 'Authorization: Bearer "${auth_token}"' -H 'Content-Type: application/json'  'https://gateway."${REGION_URL}"/rest/2.0/search/am/asset?lastSeenAssetId="${lastId_parser}"'"
   else
     echo "Request failed"
     exit
