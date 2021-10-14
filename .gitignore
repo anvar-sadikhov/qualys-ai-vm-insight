@@ -5,4 +5,4 @@ logs/*
 temp/*
 content/*
 output/*
-./auth.conf
+auth.conf
