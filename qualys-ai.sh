@@ -71,8 +71,10 @@ print(num)
 
 json_nums=$(((${count_parse} / 100) + (100 % 3 > 0)))
 
+time_start=$(date)
+
 # Output count of all assets in count.log and CLI
-echo "Count of all assets for ""${timeStart}"" is:" "${count_parse}" >logs/count.log
+echo "Count of all assets for ""${time_start}"" is:" "${count_parse}" >logs/count.log
 echo "Number of JSON files after generate:" ${json_nums} >>logs/count.log
 cat logs/count.log
 
