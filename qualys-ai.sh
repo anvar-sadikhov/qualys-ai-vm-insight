@@ -1,6 +1,6 @@
 #! /bin/bash
 
-# cd /opt/qualys     # Uncomment before add to server and crontab
+#cd /opt/qualys     # Uncomment before add to server and crontab
 
 echo "Asset Inventory JSON Generation Started at:" "$(date)"
 
@@ -98,6 +98,22 @@ done
 
 ### Function for generating of the Next JSON file
 
+function has_more {
+  has_more_message=$(echo "${last_json}" | python3 -c "
+import json
+
+with open(input()) as f:
+    data=f.read()
+    cont_list=json.loads(data)
+
+if((int(cont_list['hasMore'])) > 0):
+    print('HasMore')
+else:
+    print('No more files to download')
+   ")
+  echo "${has_more_message}" 
+}
+
 function generate_nextJson() {
   lastId_parser=$(echo "${json_file}" | python3 -c "
 import json
@@ -188,6 +204,11 @@ for ((n = 2; n <= ${json_nums}; n++)); do
   prevNum=$((n - 1))
   num=${n}
   download_json
+  last_json="content/content${json_nums}.json"
+  has_more
+  if [ "${has_more_message}" == "HasMore" ]; then
+    json_nums=$((json_nums + 1))
+  fi
 done
 
 echo "Asset Inventory JSON Generation Finished at:" "$(date)"
